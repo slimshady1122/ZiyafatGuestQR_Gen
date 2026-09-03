@@ -73,7 +73,7 @@ export default function MainPage() {
       </section>
 
       <footer className={styles.footer}>
-        Ziyafat 2 <span>/</span> 2024
+        Ziyafat 2 <span>/</span> 2026
       </footer>
     </main>
   );

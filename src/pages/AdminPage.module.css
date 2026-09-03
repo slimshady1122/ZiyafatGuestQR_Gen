@@ -49,7 +49,9 @@
   background: transparent;
   width: 100%;
   text-align: left;
-  transition: background 0.12s, color 0.12s;
+  transition:
+    background 0.12s,
+    color 0.12s;
 }
 
 .navItem:hover {
@@ -122,6 +124,20 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.homeBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 6px 0;
+  transition: color 0.12s;
+}
+
+.homeBtn:hover {
+  color: var(--text);
 }
 
 .signOutBtn {
@@ -206,7 +222,9 @@
   padding: 7px 14px;
   cursor: pointer;
   background: transparent;
-  transition: border-color 0.12s, color 0.12s;
+  transition:
+    border-color 0.12s,
+    color 0.12s;
 }
 
 .csvLabel:hover {
@@ -245,8 +263,13 @@
   white-space: nowrap;
 }
 
-.btnPrimary:hover:not(:disabled) { opacity: 0.85; }
-.btnPrimary:disabled { opacity: 0.45; cursor: not-allowed; }
+.btnPrimary:hover:not(:disabled) {
+  opacity: 0.85;
+}
+.btnPrimary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
 
 .btnSecondary {
   background: transparent;
@@ -256,7 +279,9 @@
   padding: 7px 14px;
   border-radius: 7px;
   border: 1px solid var(--border);
-  transition: border-color 0.12s, color 0.12s;
+  transition:
+    border-color 0.12s,
+    color 0.12s;
   white-space: nowrap;
 }
 
@@ -265,7 +290,10 @@
   color: var(--text);
 }
 
-.btnSecondary:disabled { opacity: 0.4; cursor: not-allowed; }
+.btnSecondary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
 
 /* Table */
 .tableWrap {
@@ -293,8 +321,12 @@
   background: var(--bg);
 }
 
-.table th:first-child { padding-left: 24px; }
-.table th:last-child { padding-right: 24px; }
+.table th:first-child {
+  padding-left: 24px;
+}
+.table th:last-child {
+  padding-right: 24px;
+}
 
 .table td {
   padding: 12px 16px;
@@ -303,16 +335,23 @@
   vertical-align: middle;
 }
 
-.table td:first-child { padding-left: 24px; }
-.table td:last-child { padding-right: 24px; }
+.table td:first-child {
+  padding-left: 24px;
+}
+.table td:last-child {
+  padding-right: 24px;
+}
 
 .table tbody tr:hover {
   background: var(--surface);
 }
 
-.nameCell { font-weight: 500; }
+.nameCell {
+  font-weight: 500;
+}
 
-.emailCell, .notesCell {
+.emailCell,
+.notesCell {
   color: var(--text-secondary);
   font-size: 13px;
   max-width: 180px;
@@ -384,7 +423,9 @@
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 4px 10px;
-  transition: border-color 0.12s, color 0.12s;
+  transition:
+    border-color 0.12s,
+    color 0.12s;
 }
 
 .actionBtn:hover {
@@ -397,7 +438,8 @@
   color: var(--red);
 }
 
-.loading, .empty {
+.loading,
+.empty {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -454,7 +496,9 @@
   transition: color 0.12s;
 }
 
-.closeBtn:hover { color: var(--text); }
+.closeBtn:hover {
+  color: var(--text);
+}
 
 .modalBody {
   padding: 20px 24px;
@@ -486,8 +530,12 @@
   transition: border-color 0.15s;
 }
 
-.input:focus { border-color: var(--accent); }
-.input::placeholder { color: var(--text-muted); }
+.input:focus {
+  border-color: var(--accent);
+}
+.input::placeholder {
+  color: var(--text-muted);
+}
 
 .formError {
   font-size: 13px;
@@ -545,7 +593,9 @@
 
 /* Responsive */
 @media (max-width: 640px) {
-  .page { flex-direction: column; }
+  .page {
+    flex-direction: column;
+  }
   .sidebar {
     width: 100%;
     flex-direction: row;
@@ -555,15 +605,48 @@
     flex-shrink: 0;
     overflow-x: auto;
   }
-  .sidebarTop { flex: 0; padding: 0; }
-  .brand { padding: 0 4px 0 0; }
-  .nav { flex-direction: row; gap: 4px; }
-  .navItem { padding: 7px 10px; white-space: nowrap; }
-  .sidebarStats { border: none; padding: 0 8px; margin: 0; gap: 12px; }
-  .statDivider { height: 20px; }
-  .sidebarBottom { padding: 0; margin-left: auto; flex-direction: row; align-items: center; }
-  .userEmail { display: none; }
-  .toolbar { padding: 12px 16px; }
-  .table th:first-child, .table td:first-child { padding-left: 16px; }
-  .table th:last-child, .table td:last-child { padding-right: 16px; }
+  .sidebarTop {
+    flex: 0;
+    padding: 0;
+  }
+  .brand {
+    padding: 0 4px 0 0;
+  }
+  .nav {
+    flex-direction: row;
+    gap: 4px;
+  }
+  .navItem {
+    padding: 7px 10px;
+    white-space: nowrap;
+  }
+  .sidebarStats {
+    border: none;
+    padding: 0 8px;
+    margin: 0;
+    gap: 12px;
+  }
+  .statDivider {
+    height: 20px;
+  }
+  .sidebarBottom {
+    padding: 0;
+    margin-left: auto;
+    flex-direction: row;
+    align-items: center;
+  }
+  .userEmail {
+    display: none;
+  }
+  .toolbar {
+    padding: 12px 16px;
+  }
+  .table th:first-child,
+  .table td:first-child {
+    padding-left: 16px;
+  }
+  .table th:last-child,
+  .table td:last-child {
+    padding-right: 16px;
+  }
 }

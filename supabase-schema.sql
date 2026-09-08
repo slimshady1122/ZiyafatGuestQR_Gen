@@ -32,9 +32,18 @@ create table if not exists scans (
   status      text not null check (status in ('valid', 'already_scanned', 'invalid'))
 );
 
+create table if not exists demo_scans (
+  id          uuid primary key default gen_random_uuid(),
+  guest_id    uuid references demo_guests(id) on delete cascade,
+  scanned_at  timestamptz default now(),
+  status      text not null check (status in ('valid', 'already_scanned', 'invalid'))
+);
+
 -- 3. Indexes for fast lookups
 create index if not exists scans_guest_id_idx on scans(guest_id);
 create index if not exists scans_status_idx   on scans(status);
+create index if not exists demo_scans_guest_id_idx on demo_scans(guest_id);
+create index if not exists demo_scans_status_idx on demo_scans(status);
 
 -- ============================================================
 -- 4. Row Level Security
@@ -46,11 +55,18 @@ create index if not exists scans_status_idx   on scans(status);
 alter table guests enable row level security;
 alter table demo_guests enable row level security;
 alter table scans  enable row level security;
+alter table demo_scans enable row level security;
 
 -- Anon (doorkeeper) can read guests to verify tickets
 drop policy if exists "Anon can read guests" on guests;
 create policy "Anon can read guests"
   on guests for select
+  to anon
+  using (true);
+
+drop policy if exists "Anon can read demo guests" on demo_guests;
+create policy "Anon can read demo guests"
+  on demo_guests for select
   to anon
   using (true);
 
@@ -68,6 +84,18 @@ create policy "Anon can read scans"
   to anon
   using (true);
 
+drop policy if exists "Anon can insert demo scans" on demo_scans;
+create policy "Anon can insert demo scans"
+  on demo_scans for insert
+  to anon
+  with check (true);
+
+drop policy if exists "Anon can read demo scans" on demo_scans;
+create policy "Anon can read demo scans"
+  on demo_scans for select
+  to anon
+  using (true);
+
 -- Authenticated (admin) can do everything
 drop policy if exists "Admin full access guests" on guests;
 create policy "Admin full access guests"
@@ -79,6 +107,13 @@ create policy "Admin full access guests"
 drop policy if exists "Demo admin full access demo guests" on demo_guests;
 create policy "Demo admin full access demo guests"
   on demo_guests for all
+  to authenticated
+  using ((auth.jwt() -> 'user_metadata' ->> 'dataset') = 'demo')
+  with check ((auth.jwt() -> 'user_metadata' ->> 'dataset') = 'demo');
+
+drop policy if exists "Demo admin full access demo scans" on demo_scans;
+create policy "Demo admin full access demo scans"
+  on demo_scans for all
   to authenticated
   using ((auth.jwt() -> 'user_metadata' ->> 'dataset') = 'demo')
   with check ((auth.jwt() -> 'user_metadata' ->> 'dataset') = 'demo');

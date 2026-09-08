@@ -54,14 +54,27 @@ export default function ScanPage() {
       if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
 
       try {
-        // 1. Look up guest by UUID
-        const { data: guest, error: guestError } = await supabase
+        // 1. Look up the QR in the primary list, then the demo list.
+        const { data: primaryGuest } = await supabase
           .from("guests")
           .select("*")
           .eq("id", decodedText)
-          .single();
+          .maybeSingle();
 
-        if (guestError || !guest) {
+        let guest = primaryGuest;
+        let scanTable = "scans";
+
+        if (!guest) {
+          const { data: demoGuest } = await supabase
+            .from("demo_guests")
+            .select("*")
+            .eq("id", decodedText)
+            .maybeSingle();
+          guest = demoGuest;
+          scanTable = "demo_scans";
+        }
+
+        if (!guest) {
           playError();
           setResult({ status: "invalid" });
           resetTimerRef.current = setTimeout(resetToScanning, RESET_DELAY);
@@ -71,7 +84,7 @@ export default function ScanPage() {
 
         // 2. Check for prior valid scan
         const { data: existingScan } = await supabase
-          .from("scans")
+          .from(scanTable)
           .select("id, scanned_at")
           .eq("guest_id", decodedText)
           .eq("status", "valid")
@@ -80,10 +93,12 @@ export default function ScanPage() {
         const status = existingScan ? "already_scanned" : "valid";
 
         // 3. Log this scan attempt
-        await supabase.from("scans").insert({
+        const { error: scanError } = await supabase.from(scanTable).insert({
           guest_id: decodedText,
           status,
         });
+
+        if (scanError) throw scanError;
 
         if (status === "valid") {
           playSuccess();

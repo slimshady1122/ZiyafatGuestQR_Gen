@@ -11,6 +11,8 @@ type Tab = "guests" | "scans";
 export default function AdminPage() {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
+  const isDemoAdmin = user?.user_metadata?.dataset === "demo";
+  const guestTable = isDemoAdmin ? "demo_guests" : "guests";
 
   const [tab, setTab] = useState<Tab>("guests");
   const [guests, setGuests] = useState<Guest[]>([]);
@@ -42,17 +44,17 @@ export default function AdminPage() {
 
   async function fetchAll() {
     setLoading(true);
-    const [guestRes, scanRes] = await Promise.all([
-      supabase
-        .from("guests")
-        .select("*")
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("scans")
-        .select("*, guests(name, party_size)")
-        .order("scanned_at", { ascending: false })
-        .limit(200),
-    ]);
+    const guestRes = await supabase
+      .from(guestTable)
+      .select("*")
+      .order("created_at", { ascending: false });
+    const scanRes = isDemoAdmin
+      ? { data: [], error: null }
+      : await supabase
+          .from("scans")
+          .select("*, guests(name, party_size)")
+          .order("scanned_at", { ascending: false })
+          .limit(200);
     if (guestRes.data) setGuests(guestRes.data);
     if (scanRes.data) setScans(scanRes.data as Scan[]);
     setLoading(false);
@@ -71,7 +73,7 @@ export default function AdminPage() {
 
     setFormLoading(true);
     setFormError("");
-    const { error } = await supabase.from("guests").insert({
+    const { error } = await supabase.from(guestTable).insert({
       name: formName.trim(),
       party_size: size,
       email: formEmail.trim() || null,
@@ -95,7 +97,7 @@ export default function AdminPage() {
   async function deleteGuest(id: string) {
     if (!confirm("Delete this guest? Their scan history will also be removed."))
       return;
-    await supabase.from("guests").delete().eq("id", id);
+    await supabase.from(guestTable).delete().eq("id", id);
     setGuests((g) => g.filter((x) => x.id !== id));
     if (qrGuest?.id === id) setQrGuest(null);
   }
@@ -161,7 +163,7 @@ export default function AdminPage() {
       return;
     }
 
-    const { error } = await supabase.from("guests").insert(rows);
+    const { error } = await supabase.from(guestTable).insert(rows);
     if (error) {
       setImportStatus(`Import failed: ${error.message}`);
     } else {
